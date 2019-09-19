@@ -5,8 +5,8 @@ import '../styles/signin.css';
 
 @inject(Aurelia, AuthService)
 export class Login {
-    username = "dev";
-    password = "Standar123";
+    username = "";
+    password = "";
 
     constructor(aurelia,authService) {
         this.aurelia = aurelia;
