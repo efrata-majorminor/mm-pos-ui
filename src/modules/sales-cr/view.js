@@ -256,13 +256,13 @@ export class View {
         // this.printStruk += "        <td colspan='3'> this.data.salesDetail.paymentType </td>";
         // this.printStruk += "    </tr>";
         this.printStruk += "    <tr>";
-        this.printStruk += "        <td colspan='3' class='text-left'> " + this.data.store.name + " </td>";
+        this.printStruk += "        <td colspan='3' class='text-left'> " + this.data.store.Name + " </td>";
         this.printStruk += "    </tr>";
         this.printStruk += "    <tr>";
-        this.printStruk += "        <td colspan='3' class='text-left'> " + this.data.store.address + " </td>";
+        this.printStruk += "        <td colspan='3' class='text-left'> " + this.data.store.Address + " </td>";
         this.printStruk += "    </tr>";
         this.printStruk += "    <tr>";
-        this.printStruk += "        <td colspan='3' class='text-left'> " + this.data.store.phone + " </td>";
+        this.printStruk += "        <td colspan='3' class='text-left'> " + this.data.store.Phone + " </td>";
         this.printStruk += "    </tr>";
         this.printStruk += "    <tr>";
         this.printStruk += "        <td colspan='3' class='text-left'> No. NPWP: 31.579.110.3-532.000 </td>";
@@ -272,7 +272,7 @@ export class View {
         this.printStruk += "    </tr>";
         this.printStruk += "    <tr>";
         this.printStruk += "        <td colspan='3' class='text-left'>";
-        this.printStruk += "            Kasir : " + this.data.store.code + "/" + this.data._createdBy;
+        this.printStruk += "            Kasir : " + this.data.store.Code + "/" + this.data._CreatedBy;
         // this.printStruk += "            <div class='col-xs-3'> Kasir </div>"; 
         // this.printStruk += "            <div class='col-xs-9'> " + this.data.store.code + "/" + this.data._createdBy + " </div>"; 
         this.printStruk += "        </td>";
@@ -296,7 +296,7 @@ export class View {
         this.printStruk += "    </tr>";
 
         for (var item of this.data.items) {
-            var totalPrice = item.quantity * item.price;
+            var totalPrice = item.quantity * item.item.domesticSale;
             var discount1Nominal = totalPrice * (item.discount1 / 100);
             var discount2Nominal = (totalPrice - discount1Nominal) * (item.discount2 / 100);
             var totalDiscount12 = discount1Nominal + discount2Nominal;

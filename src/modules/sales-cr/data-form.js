@@ -69,12 +69,16 @@ export class DataForm {
         if (e.which == 13) {
             this.service.getProductByCode(item.itemCode)
                 .then(results => {
+                    
                     this.service.getProductOnDiscount(new Date(), item.itemCode)
                         .then(products => {
+                            
                             if (results.length > 0) {
                                 var resultItem = results[0];
+                                
                                 if (resultItem) {
                                     var isAny = false;
+                                    
                                     for (var dataItem of this.data.items) {
                                         if (dataItem.itemId == resultItem._id) {
                                             isAny = true;
@@ -83,6 +87,7 @@ export class DataForm {
                                             break;
                                         }
                                     }
+                                    console.log(this.data.items);
                                     if (!isAny) {
                                         item.itemCodeReadonly = true;
                                         item.itemCode = resultItem.code;
@@ -91,25 +96,24 @@ export class DataForm {
                                         item.quantity = parseInt(item.quantity) + 1;
 
                                         products.forEach(product => {
-
-                                            if (Array.isArray(product.stores)) {
-
-                                                product.stores.forEach(store => {
-
-                                                    if (store.code === thisStore.code) {
-
+                                            
+                                            if (Array.isArray(product.store)) {
+                                                console.log(thisStore)
+                                                product.store.forEach(store => {
+                                                    if (store.Code === thisStore.Code) {
+                                                        
                                                         product.items.forEach(dataItem => {
 
-                                                            dataItem.itemsDetails.forEach(itemDetail => {
+                                                            dataItem.details.forEach(itemDetail => {
 
-                                                                if (itemDetail.code.code) {
-                                                                    if (itemDetail.code.code === resultItem.code) {
+                                                                if (itemDetail.dataDestination.code) {
+                                                                    if (itemDetail.dataDestination.code === resultItem.code) {
 
                                                                         item.discount1 = product.discountOne;
                                                                         item.discount2 = product.discountTwo;
                                                                     }
                                                                 } else {
-                                                                    if (itemDetail.code === resultItem.code) {
+                                                                    if (itemDetail.dataDestination.code === resultItem.code) {
 
                                                                         item.discount1 = product.discountOne;
                                                                         item.discount2 = product.discountTwo;
@@ -120,20 +124,20 @@ export class DataForm {
                                                     }
                                                 });
                                             } else {
-                                                if (product.stores.code === thisStore.code) {
+                                                if (product.store.code == thisStore.code) {
 
                                                     product.items.forEach(dataItem => {
 
-                                                        dataItem.itemsDetails.forEach(itemDetail => {
+                                                        dataItem.details.forEach(itemDetail => {
 
-                                                            if (itemDetail.code.code) {
-                                                                if (itemDetail.code.code === resultItem.code) {
+                                                            if (itemDetail.dataDestination.code) {
+                                                                if (itemDetail.dataDestination.code === resultItem.code) {
 
                                                                     item.discount1 = product.discountOne;
                                                                     item.discount2 = product.discountTwo;
                                                                 }
                                                             } else {
-                                                                if (itemDetail.code === resultItem.code) {
+                                                                if (itemDetail.dataDestination.codee === resultItem.code) {
 
                                                                     item.discount1 = product.discountOne;
                                                                     item.discount2 = product.discountTwo;
@@ -170,6 +174,7 @@ export class DataForm {
     getShift() {
         var today = new Date();
         this.data.shift = 0;
+        console.log(this.data.store.shifts)
         if (this.data.store.shifts) {
             for (var shift of this.data.store.shifts) {
                 var dateFrom = new Date(this.getUTCStringDate(today) + "T" + this.getUTCStringTime(new Date(shift.dateFrom)));
@@ -183,28 +188,42 @@ export class DataForm {
                 }
             }
         }
+        // }else{
+        //     //var d = new Date();
+        //     var dateOne = new Date(today.getFullYear(),today.getMonth(),today.getDate(),today.getHours(),today.getMinutes(),today.getSeconds());
+        //     var dateTwo = new Date(today.getFullYear(),today.getMonth(),today.getDate(),16,0,0)
+        //     if(dateOne > dateTwo){
+        //         this.data.shift = 2
+        //     }else{
+        //         this.data.shift = 1
+        //     }
+
+        // }
     }
 
     attached() {
         this.isPromos = false;
         // this.data.storeId = this.session.store._id;
         // this.data.store = this.session.store;
+        //console.log(this.localStorage);
         this.data.storeId = this.localStorage.store._id;
+        this.data.storeCode = this.localStorage.store.code;
         this.data.store = this.localStorage.store;
-        // this.data.shift = this.getShift();
-        this.service.getPromoNow(this.getStringDate(new Date()), this.data.store.code)
-            .then(result => {
-                this.promos = result;
-                if (this.promos.length > 0) {
-                    this.isPromos = true;
-                } else {
-                    this.isPromos = false;
-                }
-                console.log(this.isPromos);
-                this.data.salesDetail.promoDoc = [];
-            });
+        this.getShift();
+        console.log(this.data.shift);
+        // this.service.getPromoNow(this.getStringDate(new Date()), this.data.store.code)
+        //     .then(result => {
+        //         this.promos = result;
+        //         if (this.promos.length > 0) {
+        //             this.isPromos = true;
+        //         } else {
+        //             this.isPromos = false;
+        //         }
+        //         console.log(this.isPromos);
+        //         this.data.salesDetail.promoDoc = [];
+        //     });
 
-        this.service.getStore(this.data.storeId)
+        this.service.getStore(this.data.storeCode)
             .then(result => {
                 this.data.store = result;
                 // this.getShift();
@@ -223,26 +242,27 @@ export class DataForm {
         this.data.salesDetail.cashAmount = 0;
         this.data.salesDetail.cardAmount = 0;
         this.data.salesDetail.refund = 0;
-        this.bindingEngine.collectionObserver(this.data.items)
-            .subscribe(splices => {
-                var index = splices[0].index;
-                var item = this.data.items[index];
-                if (item) {
-                    this.bindingEngine.propertyObserver(item, "itemId").subscribe((newValue, oldValue) => {
-                        item.price = parseInt(item.item.domesticSale);
-                        this.refreshPromo(index);
-                    });
-                    this.bindingEngine.propertyObserver(item, "quantity").subscribe((newValue, oldValue) => {
-                        this.refreshPromo(index);
-                    });
-                }
-            });
-        this.bindingEngine.propertyObserver(this.data, "storeId").subscribe((newValue, oldValue) => {
-            this.refreshPromo(-1);
-        });
-        this.bindingEngine.propertyObserver(this.data, "date").subscribe((newValue, oldValue) => {
-            this.refreshPromo(-1);
-        });
+        // this.bindingEngine.collectionObserver(this.data.items)
+        //     .subscribe(splices => {
+        //         var index = splices[0].index;
+        //         var item = this.data.items[index];
+        //         console.log(item)
+        //         if (item) {
+        //             this.bindingEngine.propertyObserver(item, "itemId").subscribe((newValue, oldValue) => {
+        //                 item.price = parseInt(item.DomesticSale);
+        //                 this.refreshPromo(index);
+        //             });
+        //             this.bindingEngine.propertyObserver(item, "quantity").subscribe((newValue, oldValue) => {
+        //                 this.refreshPromo(index);
+        //             });
+        //         }
+        //     });
+        // this.bindingEngine.propertyObserver(this.data, "storeId").subscribe((newValue, oldValue) => {
+        //     this.refreshPromo(-1);
+        // });
+        // this.bindingEngine.propertyObserver(this.data, "date").subscribe((newValue, oldValue) => {
+        //     this.refreshPromo(-1);
+        // });
         this.bindingEngine.propertyObserver(this.data.salesDetail.voucher, "value").subscribe((newValue, oldValue) => {
             this.refreshCash();
         });
@@ -257,9 +277,9 @@ export class DataForm {
 
     search() {
         var reference = this.data.reference
-        this.service.getSalesVoidsByCode(this.data.storeId, this.data.reference)
+        this.service.getSalesVoidsByCode(this.data.storeCode, this.data.reference)
             .then(salesVoidsResult => {
-                var salesVoids = salesVoidsResult[0]
+                var salesVoids = salesVoidsResult
                 if (salesVoids) {
                     if (salesVoids.isVoid == true) {
                         //this.data.store = salesVoids.store;
@@ -301,7 +321,7 @@ export class DataForm {
         item.itemCode = '';
         item.itemId = '';
         item.item = {};
-        item.item.domesticSale = 0;
+        item.item.DomesticSale = 0;
         item.quantity = 0;
         item.price = 0;
         item.discount1 = 0;
@@ -315,6 +335,7 @@ export class DataForm {
 
         var errorItem = {};
         errorItem.itemCode = '';
+        
         this.data.items.push(item);
         this.error.items.push(errorItem);
         this.sumRow(item);
@@ -326,7 +347,7 @@ export class DataForm {
         this.data.items.splice(itemIndex, 1);
         this.error.items.splice(itemIndex, 1);
         this.sumTotal();
-        this.refreshPromo(-1);
+        //this.refreshPromo(-1);
     }
 
     rearrangeItem(isAdd) {
@@ -344,34 +365,49 @@ export class DataForm {
     sumRow(item, eventSpecialDiscount, eventDiscount1, eventDiscount2, eventDiscountNominal, eventMargin) {
         var itemIndex = this.data.items.indexOf(item);
         var itemDetail = this.data.items[itemIndex];
+        
         var specialDiscount = eventSpecialDiscount ? (eventSpecialDiscount.srcElement.value ? parseInt(eventSpecialDiscount.srcElement.value) : parseInt(eventSpecialDiscount.detail || 0)) : parseInt(itemDetail.specialDiscount);
         var discount1 = eventDiscount1 ? (eventDiscount1.srcElement.value ? parseInt(eventDiscount1.srcElement.value) : parseInt(eventDiscount1.detail || 0)) : parseInt(itemDetail.discount1);
         var discount2 = eventDiscount2 ? (eventDiscount2.srcElement.value ? parseInt(eventDiscount2.srcElement.value) : parseInt(eventDiscount2.detail || 0)) : parseInt(itemDetail.discount2);
         var discountNominal = eventDiscountNominal ? (eventDiscountNominal.detail >= 0 ? parseInt(eventDiscountNominal.detail) : parseInt(item.discountNominal || 0)) : parseInt(itemDetail.discountNominal);
         var margin = eventMargin ? (eventMargin.srcElement.value ? parseInt(eventMargin.srcElement.value) : parseInt(eventMargin.detail || 0)) : parseInt(itemDetail.margin);
         itemDetail.total = 0;
+        console.log(itemDetail);
         if (parseInt(itemDetail.quantity) > 0) {
+            console.log(itemDetail.quantity)
             //Price
-            itemDetail.total = itemDetail.quantity * itemDetail.price;
+            console.log(itemDetail.item.DomesticSale)
+            itemDetail.total = itemDetail.quantity * itemDetail.item.DomesticSale;
+            
             //Diskon
             itemDetail.total = (itemDetail.total * (100 - discount1) / 100 * (100 - discount2) / 100) - discountNominal;
+            
             //Spesial Diskon 
             itemDetail.total = itemDetail.total * (100 - specialDiscount) / 100;
+            
             //Margin
             itemDetail.total = itemDetail.total * (100 - margin) / 100;
+            
 
             itemDetail.total = parseInt(Math.round(itemDetail.total));
+            
         }
         this.sumTotal();
     }
 
     sumTotal(event) {
         var discount = event ? (event.srcElement.value ? parseInt(event.srcElement.value) : parseInt(event.detail)) : parseInt(this.data.discount);
+        
         // var discount = event ? parseInt(event.srcElement.value) : parseInt(this.data.discount);
         this.data.totalProduct = 0;
+        
         this.data.subTotal = 0;
+        
         this.data.totalDiscount = 0;
+        
         this.data.total = 0;
+        
+        console.log(this.data);
         for (var item of this.data.items) {
             this.data.subTotal = parseInt(this.data.subTotal) + parseInt(item.total);
             this.data.totalProduct = parseInt(this.data.totalProduct) + parseInt(item.quantity);
@@ -499,12 +535,12 @@ export class DataForm {
                 var itemId = item.itemId;
                 var quantity = item.quantity;
                 item.discountNominal = 0;
-                item.price = parseInt(item.item.domesticSale);
+                item.price = parseInt(item.details.domesticSale);
                 item.promoId = '';
                 item.promo = {};
-                if (storeId && itemId)
-                    getPromoes.push(this.service.getPromoByStoreDatetimeItemQuantity(storeId, date, itemId, quantity));
-                else
+                // if (storeId && itemId)
+                //     getPromoes.push(this.service.getPromoByStoreDatetimeItemQuantity(storeId, date, itemId, quantity));
+                // else
                     getPromoes.push(Promise.resolve(null));
             }
         }

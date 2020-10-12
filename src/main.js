@@ -16,13 +16,18 @@ Bluebird.config({ warnings: false });
 export async function configure(aurelia) {
   aurelia.use
     .standardConfiguration()
+    .feature("au-components")
     .feature('components')
     .plugin("aurelia-api", config => {
 
     var auth = "https://mm-auth-api-dev.azurewebsites.net/v1/";
-    var core = "https://mm-core-api-dev.azurewebsites.net/v1/core";
-    var pos = "https://mm-pos-api-dev.azurewebsites.net/v1/";
-    var inventory = "https://mm-inventory-api-dev.azurewebsites.net/v1/inventory/";
+    //var core = "https://mm-core-api-dev.azurewebsites.net/v1/core";
+    var core = "http://localhost:50189/v1/"
+    //var pos = "https://mm-pos-api-dev.azurewebsites.net/v1/";
+    var pos = "http://localhost:62458/v1/";
+    //var pos = "http://127.0.0.1:9070/v1/";
+    var inventory = "http://localhost:60745/v1/";
+    //var inventory = "http://127.0.0.1:9072/v1/";
            
       config.registerEndpoint('auth', auth);
       config.registerEndpoint('core', core);

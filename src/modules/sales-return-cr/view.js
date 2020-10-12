@@ -26,7 +26,12 @@ export class View {
                 if(item.isReturn)
                     item.returnStatus = "Retur"; 
             }
-            
+            // this.service.getStore2(this.data.store.Code)
+            // .then(result=>{
+            //     this.data.storeAddress = result.Address;
+            //     this.data.storePhone = result.Phone;
+            // });
+            // console.log(this.data);
             this.checkPaymentType();
             //this.generatePrintStruk();
             this.generatePrintStrukTable();
@@ -294,6 +299,7 @@ export class View {
     }
     
     generatePrintStrukTable() { 
+        console.log(this.data)
         var discountSubTotal = parseInt(this.data.salesDocReturn.subTotal) * (parseInt(this.data.salesDocReturn.discount) / 100);
         var exchange = (parseInt(this.data.salesDocReturn.salesDetail.cardAmount) + parseInt(this.data.salesDocReturn.salesDetail.cashAmount) + parseInt(this.data.salesDocReturn.salesDetail.voucher.value)) - parseInt(this.data.salesDocReturn.grandTotal);
         var hemat = 0;
@@ -305,13 +311,13 @@ export class View {
         // this.printStruk += "        <td colspan='3'> this.data.salesDocReturn.salesDetail.paymentType </td>";
         // this.printStruk += "    </tr>";
         this.printStruk += "    <tr>";
-        this.printStruk += "        <td colspan='3' class='text-left'> " + this.data.store.name + " </td>";
+        this.printStruk += "        <td colspan='3' class='text-left'> " + this.data.store.Name + " </td>";
         this.printStruk += "    </tr>";
         this.printStruk += "    <tr>";
-        this.printStruk += "        <td colspan='3' class='text-left'> " + this.data.store.address + " </td>";
+        this.printStruk += "        <td colspan='3' class='text-left'> " + this.data.store.Address + " </td>";
         this.printStruk += "    </tr>";
         this.printStruk += "    <tr>";
-        this.printStruk += "        <td colspan='3' class='text-left'> " + this.data.store.phone + " </td>";
+        this.printStruk += "        <td colspan='3' class='text-left'> " + this.data.store.Phone + " </td>";
         this.printStruk += "    </tr>";
         this.printStruk += "    <tr>";
         this.printStruk += "        <td colspan='3' class='text-left'> No. NPWP: 31.579.110.3-532.000 </td>";
@@ -321,7 +327,7 @@ export class View {
         this.printStruk += "    </tr>";
         this.printStruk += "    <tr>";
         this.printStruk += "        <td colspan='3' class='text-left'>";
-        this.printStruk += "            Kasir : " + this.data.store.code + "/" + this.data._createdBy;
+        this.printStruk += "            Kasir : " + this.data.store.Code + "/" + this.data._createdBy;
         // this.printStruk += "            <div class='col-xs-3'> Kasir </div>"; 
         // this.printStruk += "            <div class='col-xs-9'> " + this.data.store.code + "/" + this.data._createdBy + " </div>"; 
         this.printStruk += "        </td>";
