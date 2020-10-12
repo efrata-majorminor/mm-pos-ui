@@ -45,8 +45,9 @@ export class Create {
             this.data.salesDetail.bankCardId = this.data.salesDetail.bankCard._id;
 
         this.service.create(this.data)
-            .then(id => {
-                this.detail(id);
+            .then(result => {
+                console.log(result);
+                this.detail(result);
                 //this.list();
             })
             .catch(e => {
