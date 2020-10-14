@@ -174,9 +174,21 @@ export class DataForm {
     getShift() {
         var today = new Date();
         this.data.shift = 0;
-        console.log(this.data.store.shifts)
+        var shifts = [];
+        var shift1 = {};
+        shift1.shift = 1;
+        shift1.dateFrom = "2000-01-02T03:00:00+07:00";
+        shift1.dateTo = "2000-01-01T15:59:59+07:00";
+        var shift2 = {};
+        shift2.shift = 2;
+        shift2.dateFrom = "2000-01-01T16:00:00+07:00";
+        shift2.dateTo = "2000-01-02T02:59:59+07:00";
+        shifts.push(shift1);
+        shifts.push(shift2);
+        //console.log(this.data.store.shifts)
         if (this.data.store.shifts) {
             for (var shift of this.data.store.shifts) {
+                var date = new Date("2000-01-02T03:00:00+07:00");
                 var dateFrom = new Date(this.getUTCStringDate(today) + "T" + this.getUTCStringTime(new Date(shift.dateFrom)));
                 var dateTo = new Date(this.getUTCStringDate(today) + "T" + this.getUTCStringTime(new Date(shift.dateTo)));
                 if (dateFrom > dateTo) {
@@ -188,17 +200,20 @@ export class DataForm {
                 }
             }
         }
-        // }else{
-        //     //var d = new Date();
-        //     var dateOne = new Date(today.getFullYear(),today.getMonth(),today.getDate(),today.getHours(),today.getMinutes(),today.getSeconds());
-        //     var dateTwo = new Date(today.getFullYear(),today.getMonth(),today.getDate(),16,0,0)
-        //     if(dateOne > dateTwo){
-        //         this.data.shift = 2
-        //     }else{
-        //         this.data.shift = 1
-        //     }
+        else{
+            for (var shift of shifts) {
+                var dateFrom = new Date(this.getUTCStringDate(today) + "T" + this.getUTCStringTime(new Date(shift.dateFrom)));
+                var dateTo = new Date(this.getUTCStringDate(today) + "T" + this.getUTCStringTime(new Date(shift.dateTo)));
+                if (dateFrom > dateTo) {
+                    dateTo.setDate(dateTo.getDate + 1);
+                }
+                if (dateFrom < today && today < dateTo) {
+                    this.data.shift = parseInt(shift.shift);
+                    break;
+                }
+            }
 
-        // }
+        }
     }
 
     attached() {
@@ -210,7 +225,7 @@ export class DataForm {
         this.data.storeCode = this.localStorage.store.code;
         this.data.store = this.localStorage.store;
         this.getShift();
-        console.log(this.data.shift);
+        //console.log(this.data.shift);
         // this.service.getPromoNow(this.getStringDate(new Date()), this.data.store.code)
         //     .then(result => {
         //         this.promos = result;
