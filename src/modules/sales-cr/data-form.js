@@ -7,7 +7,7 @@ import { LocalStorage } from '../../utils/storage';
 export class DataForm {
     @bindable data = {};
     @bindable error = {};
-
+   // @bindable card;
     finishedGoodsApiUri = 'master/finishedgoods';
     voucherApiUri = '';
 
@@ -33,8 +33,9 @@ export class DataForm {
         this.readOnlyFalse = false;
         this.numericOptions = { separator: ',' }
         this.localStorage = localStorage;
-
+        //console.log()
         this.stores = this.localStorage.me.data.stores;
+        // console.log(this.stores);
         // this.discounts.forEach(s => { s.toString = function () { return `${this.value}%` } });
         //this.stores = session.stores; 
 
@@ -87,7 +88,7 @@ export class DataForm {
                                             break;
                                         }
                                     }
-                                    console.log(this.data.items);
+                                    // console.log(this.data.items);
                                     if (!isAny) {
                                         item.itemCodeReadonly = true;
                                         item.itemCode = resultItem.code;
@@ -98,7 +99,7 @@ export class DataForm {
                                         products.forEach(product => {
                                             
                                             if (Array.isArray(product.store)) {
-                                                console.log(thisStore)
+                                                // console.log(thisStore)
                                                 product.store.forEach(store => {
                                                     if (store.Code === thisStore.Code) {
                                                         
@@ -177,20 +178,20 @@ export class DataForm {
         var shifts = [];
         var shift1 = {};
         shift1.shift = 1;
-        shift1.dateFrom = "2000-01-02T03:00:00+07:00";
-        shift1.dateTo = "2000-01-01T15:59:59+07:00";
+        shift1.dateFrom = new Date('2000-01-02T03:00:00+07:00');
+        shift1.dateTo = new Date('2000-01-01T15:59:59+07:00');
         var shift2 = {};
         shift2.shift = 2;
-        shift2.dateFrom = "2000-01-01T16:00:00+07:00";
-        shift2.dateTo = "2000-01-02T02:59:59+07:00";
+        shift2.dateFrom = new Date('2000-01-01T16:00:00+07:00');
+        shift2.dateTo = new Date('2000-01-02T02:59:59+07:00');
         shifts.push(shift1);
         shifts.push(shift2);
         //console.log(this.data.store.shifts)
         if (this.data.store.shifts) {
             for (var shift of this.data.store.shifts) {
-                var date = new Date("2000-01-02T03:00:00+07:00");
-                var dateFrom = new Date(this.getUTCStringDate(today) + "T" + this.getUTCStringTime(new Date(shift.dateFrom)));
-                var dateTo = new Date(this.getUTCStringDate(today) + "T" + this.getUTCStringTime(new Date(shift.dateTo)));
+                //var date = new Date("2000-01-02T03:00:00+07:00");
+                var dateFrom = new Date(this.getUTCStringDate(date) + "T" + this.getUTCStringTime(new Date(shift.dateFrom)));
+                var dateTo = new Date(this.getUTCStringDate(date) + "T" + this.getUTCStringTime(new Date(shift.dateTo)));
                 if (dateFrom > dateTo) {
                     dateTo.setDate(dateTo.getDate + 1);
                 }
@@ -202,12 +203,20 @@ export class DataForm {
         }
         else{
             for (var shift of shifts) {
-                var dateFrom = new Date(this.getUTCStringDate(today) + "T" + this.getUTCStringTime(new Date(shift.dateFrom)));
-                var dateTo = new Date(this.getUTCStringDate(today) + "T" + this.getUTCStringTime(new Date(shift.dateTo)));
+                var dateFrom = new Date(this.getUTCStringDate(today) + "T" + this.getStringTime(new Date(shift.dateFrom)));
+                var dateTo = new Date(this.getUTCStringDate(today) + "T" + this.getStringTime(new Date(shift.dateTo)));
                 if (dateFrom > dateTo) {
                     dateTo.setDate(dateTo.getDate + 1);
                 }
+                // console.log(dateFrom);
+                // console.log(dateTo);
+                // //console.log(dateFrom);
+                // console.log(this.getUTCStringDate(today));
+                // console.log(this.getUTCStringTime(new Date(shift.dateFrom)));
+                
+                // console.log(today);
                 if (dateFrom < today && today < dateTo) {
+                   // console.log(shift.shift);
                     this.data.shift = parseInt(shift.shift);
                     break;
                 }
@@ -224,6 +233,8 @@ export class DataForm {
         this.data.storeId = this.localStorage.store._id;
         this.data.storeCode = this.localStorage.store.code;
         this.data.store = this.localStorage.store;
+        //this.data.salesDetail.card = "Debit";
+        //console.log(this.data.salesDetail.card)
         this.getShift();
         //console.log(this.data.shift);
         // this.service.getPromoNow(this.getStringDate(new Date()), this.data.store.code)
@@ -327,7 +338,7 @@ export class DataForm {
                     alert('Referensi Void tidak ditemukan');
             })
             .catch(e => {
-                console.log(e);
+                //console.log(e);
             })
     }
 
@@ -364,7 +375,23 @@ export class DataForm {
         this.sumTotal();
         //this.refreshPromo(-1);
     }
-
+    cardChanged(newValue, oldValue) {
+        //console.log(this.data)
+        //console.log(newValue)
+        var selectedSupplier = newValue;
+        if (selectedSupplier._id) {
+            if (selectedSupplier) {
+                this.data.salesDetail.card = selectedSupplier;
+                // console.log(this.data.salesDetail.card)
+                //this.data.processname = selectedSupplier.name;
+                //this.process = selectedSupplier;
+            }
+        } else {
+            this.process = {};
+            this.data.salesDetail.card = undefined;
+            //this.data.processname = undefined;
+        }
+    }
     rearrangeItem(isAdd) {
         for (var i = 0; i < this.data.items.length;) {
             var item = this.data.items[i];
@@ -387,11 +414,11 @@ export class DataForm {
         var discountNominal = eventDiscountNominal ? (eventDiscountNominal.detail >= 0 ? parseInt(eventDiscountNominal.detail) : parseInt(item.discountNominal || 0)) : parseInt(itemDetail.discountNominal);
         var margin = eventMargin ? (eventMargin.srcElement.value ? parseInt(eventMargin.srcElement.value) : parseInt(eventMargin.detail || 0)) : parseInt(itemDetail.margin);
         itemDetail.total = 0;
-        console.log(itemDetail);
+        // console.log(itemDetail);
         if (parseInt(itemDetail.quantity) > 0) {
-            console.log(itemDetail.quantity)
+            // console.log(itemDetail.quantity)
             //Price
-            console.log(itemDetail.item.DomesticSale)
+            // console.log(itemDetail.item.DomesticSale)
             itemDetail.total = itemDetail.quantity * itemDetail.item.DomesticSale;
             
             //Diskon
@@ -422,7 +449,7 @@ export class DataForm {
         
         this.data.total = 0;
         
-        console.log(this.data);
+        //console.log(this.data);
         for (var item of this.data.items) {
             this.data.subTotal = parseInt(this.data.subTotal) + parseInt(item.total);
             this.data.totalProduct = parseInt(this.data.totalProduct) + parseInt(item.quantity);
@@ -507,8 +534,9 @@ export class DataForm {
     }
 
     getUTCStringDate(date) {
+        
         var dd = date.getUTCDate();
-        var mm = date.getUTCMonth() + 1; //January is 0! 
+        var mm = date.getUTCMonth() + 1; //January is 0 
         var yyyy = date.getUTCFullYear();
         if (dd < 10) {
             dd = '0' + dd
@@ -517,6 +545,7 @@ export class DataForm {
             mm = '0' + mm
         }
         date = yyyy + '-' + mm + '-' + dd;
+        // console.log(date);
         return date;
     }
 
@@ -534,6 +563,25 @@ export class DataForm {
             ss = '0' + ss
         }
         date = hh + ':' + mm + ':' + ss;
+        return date;
+    }
+
+    getStringTime(date) {
+        var hh = date.getHours();
+        // console.log(hh);
+        var mm = date.getMinutes();
+        var ss = date.getSeconds();
+        if (hh < 10) {
+            hh = '0' + hh
+        }
+        if (mm < 10) {
+            mm = '0' + mm
+        }
+        if (ss < 10) {
+            ss = '0' + ss
+        }
+        date = hh + ':' + mm + ':' + ss;
+        
         return date;
     }
 

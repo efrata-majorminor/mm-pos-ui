@@ -19,9 +19,14 @@ export class Service extends RestService {
     }
 
     search(storeId, keyword) {
-        var endpoint = `${serviceUriStoreSales}/${storeId}`;
+        var endpoint = `${serviceUriStoreSales}/${storeId}?filter=${keyword}`;
         return super.get(endpoint);
     }
+
+    // search(storeId, keyword) {
+    //     var endpoint = `${serviceUriStoreSales}/${storeId}`;
+    //     return super.list(endpoint, keyword);
+    // }
 
     getById(id) {
         var endpoint = `${serviceUri}/${id}`;

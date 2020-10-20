@@ -143,30 +143,22 @@ export class DataForm {
 
   getShift() {
     var shifts = [];
-        var shift1 = {};
-        shift1.shift = 1;
-        shift1.dateFrom = "2000-01-02T03:00:00+07:00";
-        shift1.dateTo = "2000-01-01T15:59:59+07:00";
-        var shift2 = {};
-        shift2.shift = 2;
-        shift2.dateFrom = "2000-01-01T16:00:00+07:00";
-        shift2.dateTo = "2000-01-02T02:59:59+07:00";
-        shifts.push(shift1);
-        shifts.push(shift2);
+    var shift1 = {};
+    shift1.shift = 1;
+    shift1.dateFrom = new Date('2000-01-02T03:00:00+07:00');
+    shift1.dateTo = new Date('2000-01-01T15:59:59+07:00');
+    var shift2 = {};
+    shift2.shift = 2;
+    shift2.dateFrom = new Date('2000-01-01T16:00:00+07:00');
+    shift2.dateTo = new Date('2000-01-02T02:59:59+07:00');
+    shifts.push(shift1);
+    shifts.push(shift2);
     var today = new Date();
     this.data.shift = 0;
     if (this.data.store.shifts) {
       for (var shift of this.data.store.shifts) {
-        var dateFrom = new Date(
-          this.getUTCStringDate(today) +
-            "T" +
-            this.getUTCStringTime(new Date(shift.dateFrom))
-        );
-        var dateTo = new Date(
-          this.getUTCStringDate(today) +
-            "T" +
-            this.getUTCStringTime(new Date(shift.dateTo))
-        );
+        var dateFrom = new Date(this.getUTCStringDate(today) + "T" +  this.getUTCStringTime(new Date(shift.dateFrom)));
+        var dateTo = new Date(this.getUTCStringDate(today) + "T" + this.getUTCStringTime(new Date(shift.dateTo)));
         if (dateFrom < today && today < dateTo) {
           this.data.shift = parseInt(shift.shift);
           break;
@@ -174,16 +166,8 @@ export class DataForm {
       }
     }else{
       for (var shift of shifts) {
-        var dateFrom = new Date(
-          this.getUTCStringDate(today) +
-            "T" +
-            this.getUTCStringTime(new Date(shift.dateFrom))
-        );
-        var dateTo = new Date(
-          this.getUTCStringDate(today) +
-            "T" +
-            this.getUTCStringTime(new Date(shift.dateTo))
-        );
+        var dateFrom = new Date( this.getUTCStringDate(today) + "T" + this.getStringTime(new Date(shift.dateFrom)));
+        var dateTo = new Date(this.getUTCStringDate(today) +"T" + this.getStringTime(new Date(shift.dateTo)));
         if (dateFrom < today && today < dateTo) {
           this.data.shift = parseInt(shift.shift);
           break;
@@ -202,7 +186,8 @@ export class DataForm {
     console.log(this.data.store)
     console.log(this.data); 
     // this.data.store = this.session.store;
-    this.data.shift = this.getShift();
+    this.getShift();
+    //console.log(this.data.shift);
 
     // this.service
     //   .getPromoNow(this.getStringDate(new Date()), this.data.store.code)
@@ -597,6 +582,25 @@ export class DataForm {
     date = hh + ":" + mm + ":" + ss;
     return date;
   }
+
+  getStringTime(date) {
+    var hh = date.getHours();
+    // console.log(hh);
+    var mm = date.getMinutes();
+    var ss = date.getSeconds();
+    if (hh < 10) {
+        hh = '0' + hh
+    }
+    if (mm < 10) {
+        mm = '0' + mm
+    }
+    if (ss < 10) {
+        ss = '0' + ss
+    }
+    date = hh + ':' + mm + ':' + ss;
+    
+    return date;
+}
 
   setDate() {
     this.data.date = new Date(this.data.datePicker);

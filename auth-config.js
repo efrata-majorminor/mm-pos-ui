@@ -3,8 +3,8 @@ export default {
     //configureEndpoints: ["auth", "core", "master", "pos", "inventory"],
     configureEndpoints: ["auth", "core", "pos", "inventory"],
 
-    loginUrl: "/authenticate",
-    profileUrl: "/me",
+    loginUrl: "authenticate",
+    profileUrl: "me",
 
     authTokenType:"Bearer",
     //authTokenType: "JWT",

@@ -44,6 +44,7 @@ export class Create {
         if (this.data.salesDetail.bankCard)
             this.data.salesDetail.bankCardId = this.data.salesDetail.bankCard._id;
 
+        console.log(this.data)
         this.service.create(this.data)
             .then(result => {
                 console.log(result);
