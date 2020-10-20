@@ -296,10 +296,12 @@ export class View {
         this.printStruk += "    </tr>";
 
         for (var item of this.data.items) {
-            var totalPrice = item.quantity * item.item.domesticSale;
+            var totalPrice = item.quantity * item.item.DomesticSale;
+            //console.log(item.quantity)
             var discount1Nominal = totalPrice * (item.discount1 / 100);
             var discount2Nominal = (totalPrice - discount1Nominal) * (item.discount2 / 100);
             var totalDiscount12 = discount1Nominal + discount2Nominal;
+            //console.log(totalDiscount12);
             var discountSpecialNominal = ((totalPrice - totalDiscount12) - item.discountNominal) * (item.specialDiscount / 100)
             hemat += discount1Nominal + discount2Nominal + item.discountNominal + discountSpecialNominal;
 

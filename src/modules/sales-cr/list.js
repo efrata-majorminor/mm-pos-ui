@@ -14,9 +14,10 @@ export class List {
         this.filter = "";
         this.authService = authService;
         this.localStorage = localStorage;
+       // console.log(localStorage);
         this.storeId = this.localStorage.store._id;
         this.storecode = this.localStorage.store.code;
-        // this.storeId = this.session.store._id;
+        //this.storeId = this.session.store._id;
     }
 
     activate() {

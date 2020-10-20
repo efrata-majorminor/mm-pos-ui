@@ -13,12 +13,15 @@ export class List {
         this.localStorage = localStorage;
         this.storeId = this.localStorage.store._id;
         this.storeCode = this.localStorage.store.code;
-        this.filter = "";
+        //this.filter = {isVoid : true}";
         // this.storeId = this.session.store._id;
     }
 
     activate() { 
-        this.service.search(this.storeCode, this.filter)
+        var filter = JSON.stringify({
+            isVoid : true
+        })
+        this.service.search(this.storeCode, filter)
             .then(data => { 
                 this.data = data;
                 for(var i of this.data) {

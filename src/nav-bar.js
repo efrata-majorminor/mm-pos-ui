@@ -6,12 +6,14 @@ import { LocalStorage } from './utils/storage';
 @inject(Aurelia, Router, BindingEngine, AuthService, LocalStorage)
 export class NavBar {
     constructor(aurelia, router, bindingEngine, authService, localStorage) {
+        //console.log(context);
         this.aurelia = aurelia;
         this.router = router;
         this.bindingEngine = bindingEngine;
         this.authService = authService;
         this.localStorage = localStorage;
-        this.storeId = this.localStorage.store._id;
+        this.storeId = this.localStorage.store._id.toString();
+        //console.log(this.storeId);
         this.user = this.localStorage.me;
         // this.storeId = this.session.store._id;
     }
@@ -22,6 +24,7 @@ export class NavBar {
         if (storage.get("me")) {
             this.stores = JSON.parse(storage.get("me")).data.stores;
         }
+        console.log(this.stores)
         this.bindingEngine.propertyObserver(this, "storeId").subscribe((newValue, oldValue) => {
             for (var store of this.stores) {
                 if (store._id.toString() === this.storeId.toString()) {
