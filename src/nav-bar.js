@@ -12,7 +12,7 @@ export class NavBar {
         this.bindingEngine = bindingEngine;
         this.authService = authService;
         this.localStorage = localStorage;
-        this.storeId = this.localStorage.store._id.toString();
+        this.storeId = this.localStorage.store._id;
         //console.log(this.storeId);
         this.user = this.localStorage.me;
         // this.storeId = this.session.store._id;
