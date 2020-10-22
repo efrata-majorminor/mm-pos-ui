@@ -313,7 +313,7 @@ export class DataForm {
                         this.data.datePicker = this.getStringDate(new Date(salesVoids.date));
                         this.data.date = new Date(salesVoids.date);
                         this.data.reference = salesVoids.code;
-                        this.data.remark = salesVoids.remark;
+                        this.data.remark = salesVoids.remark == null ? "" : salesVoids.remark;
                         for (var salesVoidsItem of salesVoids.items) {
                             var item = {};
                             item.itemCode = salesVoidsItem.item.code;
